@@ -112,7 +112,7 @@ function ProductDetails() {
     }
 
 
-    return `http://localhost:5000${product.image}`;
+    return `${import.meta.env.VITE_API_URL}${product.image}`;
 
   };
 
