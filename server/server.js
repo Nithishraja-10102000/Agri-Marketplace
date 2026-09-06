@@ -14,7 +14,11 @@ const enquiryRoutes = require("./routes/enquiryRoutes");
 
 dotenv.config();
 
-console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
+console.log(
+  "JWT_SECRET loaded:",
+  !!process.env.JWT_SECRET
+);
+
 const app = express();
 
 connectDB();
@@ -25,7 +29,10 @@ connectDB();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://agri-marketplace-indol.vercel.app"
+    ],
     credentials: true
   })
 );
@@ -85,7 +92,8 @@ app.use(
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Agri Marketplace API is running 🌾"
+    message:
+      "Agri Marketplace API is running 🌾"
   });
 });
 
@@ -105,11 +113,15 @@ app.use((req, res) => {
 // ==============================
 
 app.use((err, req, res, next) => {
-  console.error("SERVER ERROR:", err);
+  console.error(
+    "SERVER ERROR:",
+    err
+  );
 
   res.status(500).json({
     success: false,
-    message: err.message || "Server error"
+    message:
+      err.message || "Server error"
   });
 });
 
@@ -117,10 +129,11 @@ app.use((err, req, res, next) => {
 // SERVER
 // ==============================
 
-const PORT = process.env.PORT || 5000;
+const PORT =
+  process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(
-    `🚀 Server running on http://localhost:${PORT}`
+    `🚀 Server running on port ${PORT}`
   );
 });
