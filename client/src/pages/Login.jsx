@@ -34,32 +34,71 @@ function Login() {
     setLoading(true);
 
     try {
+      console.log("Sending login request...");
+
       const response = await API.post(
         "/auth/login",
-        formData
+        {
+          email: formData.email.trim(),
+          password: formData.password
+        }
       );
+
+      console.log("LOGIN RESPONSE:", response.data);
 
       const { token, user } = response.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      if (!token || !user) {
+        throw new Error("Invalid login response from server");
+      }
 
+      // Save login information
+      localStorage.setItem("token", token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(user)
+      );
+
+      // Redirect based on role
       if (user.role === "farmer") {
         navigate("/farmer/dashboard");
-      } else {
+      } else if (user.role === "buyer") {
         navigate("/buyer/dashboard");
+      } else {
+        setError("Invalid user role");
       }
 
     } catch (error) {
+      console.error("LOGIN ERROR:", error);
       console.error(
-        "LOGIN ERROR:",
-        error.response?.data || error
+        "STATUS:",
+        error.response?.status
+      );
+      console.error(
+        "DATA:",
+        error.response?.data
       );
 
-      setError(
-        error.response?.data?.message ||
-        "Invalid email or password"
-      );
+      const serverMessage =
+        error.response?.data?.message;
+
+      if (serverMessage) {
+        setError(serverMessage);
+      } else if (error.response) {
+        setError(
+          `Server error (${error.response.status})`
+        );
+      } else if (error.request) {
+        setError(
+          "Cannot connect to server. Make sure the backend is running on port 5000."
+        );
+      } else {
+        setError(
+          error.message ||
+          "Unable to login"
+        );
+      }
+
     } finally {
       setLoading(false);
     }
@@ -100,6 +139,7 @@ function Login() {
               onChange={handleChange}
               placeholder="Enter your email"
               autoComplete="email"
+              required
             />
           </div>
 
@@ -113,6 +153,7 @@ function Login() {
               onChange={handleChange}
               placeholder="Enter your password"
               autoComplete="current-password"
+              required
             />
           </div>
 
@@ -125,7 +166,9 @@ function Login() {
             }}
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading
+              ? "Logging in..."
+              : "Login"}
           </button>
 
         </form>
@@ -143,8 +186,12 @@ function Login() {
           <button
             type="button"
             className="btn btn-outline"
-            style={{ marginTop: "10px" }}
-            onClick={() => navigate("/register")}
+            style={{
+              marginTop: "10px"
+            }}
+            onClick={() =>
+              navigate("/register")
+            }
           >
             Create Account
           </button>
@@ -159,7 +206,8 @@ function Login() {
             border: "none",
             background: "transparent",
             color: "var(--primary)",
-            fontWeight: "600"
+            fontWeight: "600",
+            cursor: "pointer"
           }}
         >
           ← Back to Home

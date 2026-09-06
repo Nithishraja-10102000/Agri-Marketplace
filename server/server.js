@@ -14,6 +14,7 @@ const enquiryRoutes = require("./routes/enquiryRoutes");
 
 dotenv.config();
 
+console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
 const app = express();
 
 connectDB();
