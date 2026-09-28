@@ -31,8 +31,12 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://agri-marketplace-indol.vercel.app"
+      "https://agri-marketplace-indol.vercel.app",
+      "https://agri-marketplace-git-main-nithishraja-10102000s-projects.vercel.app",
+      "https://agri-marketplace-k3bkc01os-nithishraja-10102000s-projects.vercel.app"
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
   })
 );
